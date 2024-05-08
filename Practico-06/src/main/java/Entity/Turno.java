@@ -13,7 +13,6 @@ public class Turno {
     private int id;
     private Paciente paciente;
     private Medico medico;
-    private Date fecha;
     private boolean razonParticular;
 
 }

@@ -14,23 +14,25 @@ public class PacienteDAOIm implements PacienteDAO {
 
     @Override
     public List<Paciente> listarTodos() {
+
         return new  ArrayList<>(pacientes.values());
     }
 
     @Override
     public Paciente buscarPorId(int id) {
+
         return pacientes.get(id);
     }
 
     @Override
     public void registrar(Paciente paciente) {
-        System.out.println("El Paciente "+ paciente.getNombre() + paciente.getApellido() +" fue registrado" );
+        System.out.println("El Paciente "+ paciente.getNombre() +" "+ paciente.getApellido() +" fue registrado" );
         pacientes.put(paciente.getId(), paciente);
     }
 
     @Override
     public void modificar(Paciente paciente) {
-        System.out.println("Paciente" + paciente.getNombre() + paciente.getApellido() + " fue modificado y actualizado");
+        System.out.println("Paciente " + paciente.getNombre() +" "+ paciente.getApellido() + " fue modificado y actualizado");
         pacientes.put(paciente.getId(), paciente);
 
     }
