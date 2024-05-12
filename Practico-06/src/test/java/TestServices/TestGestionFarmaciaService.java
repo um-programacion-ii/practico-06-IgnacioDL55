@@ -1,4 +1,4 @@
-package TestDAO;
+package TestServices;
 
 import Entity.*;
 import Services.GestionFarmaciaService;
