@@ -6,14 +6,17 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import DAO.Implements.MedicamentoDAOIm;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Drogueria {
-    private List<Medicamento> medicamentosEnDrogueria;
+    public MedicamentoDAOIm medicamentoDAOIm;
 
-    public List<Medicamento> getMedicamentosEnDrogueria(List<Medicamento> medicamentosEnDrogueria) {
-        return medicamentosEnDrogueria;
+    public Medicamento getMedicamentosEnDrogueria(Medicamento medicamento) {
+        Medicamento medicamento1 = new Medicamento(medicamento.getId(), medicamento.getNombre(), medicamento.getCantidad());
+        medicamentoDAOIm.modificar(medicamento1);
+        return medicamento1;
     }
 }
