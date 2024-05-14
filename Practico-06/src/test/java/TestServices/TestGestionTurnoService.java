@@ -12,7 +12,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.security.cert.TrustAnchor;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -45,7 +47,6 @@ public class TestGestionTurnoService {
 
     @Test
     public void testSolicitarMedicoEspecialidad() {
-        List<ObraSocial> obraSociales = new ArrayList<>();
         ObraSocial sancorSalud = new ObraSocial(1, "sancor salud");
         ObraSocial osde = new ObraSocial(2,"OSDE");
 
@@ -53,27 +54,30 @@ public class TestGestionTurnoService {
         Especialidad cardiologo = new Especialidad(2, "Cardiologo");
 
         List<Medico> medicos = new ArrayList<>();
-        Medico medico = new Medico(1,"Armado","Huesillo",obraSociales,traumatologo);
-        Medico medico1= new Medico(2,"Luis", "Ramirez",obraSociales,traumatologo);
-        Medico medico2= new Medico(3,"Javier","Hernandez",obraSociales,cardiologo);
+        Medico medico = new Medico(1,"Armado","Huesillo",Arrays.asList(sancorSalud),traumatologo);
+        Medico medico1= new Medico(2,"Luis", "Ramirez",Arrays.asList(osde,sancorSalud),traumatologo);
+        Medico medico2= new Medico(3,"Javier","Hernandez",Arrays.asList(osde),cardiologo);
+        Medico medico3= new Medico(4,"Pepe","Argento",Arrays.asList(osde,sancorSalud),cardiologo);
         medicos.add(medico);
         medicos.add(medico1);
         medicos.add(medico2);
+        medicos.add(medico3);
 
-        Paciente paciente = new Paciente(1,"Juan", "Gomez",sancorSalud);
         Paciente paciente1 = new Paciente(2, "Humberto", "Tonico",osde);
 
-        Mockito.when(medicoDAO.findEspecialidad(traumatologo)).thenReturn(medicos);
-        List<Medico> traumatologos = gestionTurnoService.solicitarMedicoEspecialidad(paciente,traumatologo,false);
-        for (Medico medicoResult: traumatologos ){
-            assertEquals(medicoResult.getNombre(),medico.getNombre());
-        }
+        Mockito.when(medicoDAO.findEspecialidad(cardiologo)).thenReturn(medicos);
+        List<Medico> cardiologos = gestionTurnoService.solicitarMedicoEspecialidad(paciente1,cardiologo,false);
+        List<Medico> medicosEsperados = Arrays.asList(medico2,medico3);
+        assertEquals(medicosEsperados,cardiologos);
+
+        System.out.println(cardiologos);
+        System.out.println(medicosEsperados);
 
     }
 
     @Test
     public void testMedicosEspecialidadRazonParticular() {
-        List<ObraSocial> obraSociales = new ArrayList<>();
+
         ObraSocial sancorSalud = new ObraSocial(1, "sancor salud");
         ObraSocial osde = new ObraSocial(2,"OSDE");
 
@@ -81,34 +85,40 @@ public class TestGestionTurnoService {
         Especialidad cardiologo = new Especialidad(2, "Cardiologo");
 
         List<Medico> medicos = new ArrayList<>();
-        Medico medico = new Medico(1,"Armado","Huesillo",obraSociales,traumatologo);
-        Medico medico1= new Medico(2,"Luis", "Ramirez",obraSociales,traumatologo);
-        Medico medico2= new Medico(3,"Javier","Hernandez",obraSociales,cardiologo);
+        Medico medico = new Medico(1,"Armado","Huesillo",Arrays.asList(sancorSalud),traumatologo);
+        Medico medico1= new Medico(2,"Luis", "Ramirez",Arrays.asList(osde,sancorSalud),traumatologo);
+        Medico medico2= new Medico(3,"Javier","Hernandez",Arrays.asList(osde),traumatologo);
+        Medico medico3= new Medico(4,"Pepe","Argento",Arrays.asList(osde,sancorSalud),cardiologo);
+
+
         medicos.add(medico);
         medicos.add(medico1);
         medicos.add(medico2);
+        medicos.add(medico3);
 
-        Paciente paciente = new Paciente(1,"Juan", "Gomez",sancorSalud);
+        Paciente paciente = new Paciente(1,"Juan", "Gomez",null);
 
         Mockito.when(medicoDAO.findEspecialidad(traumatologo)).thenReturn(medicos);
         List<Medico> traumatologos = gestionTurnoService.solicitarMedicoEspecialidad(paciente,traumatologo,true);
-        assertEquals(medicos, traumatologos);
+        List<Medico> medicosEsperados = Arrays.asList(medico,medico1,medico2);
+        assertEquals(medicosEsperados, traumatologos);
+
     }
 
     @Test
     public void testSolicitarTurno(){
-        List<ObraSocial> obraSociales = new ArrayList<>();
         ObraSocial sancorSalud = new ObraSocial(1, "sancor salud");
-        ObraSocial osde = new ObraSocial(2,"OSDE");
-        ObraSocial swissMedical = new ObraSocial(2,"Swiss Medical");
 
         Especialidad traumatologo = new Especialidad(1, "Traumatologo");
-        Medico medico = new Medico(1,"Armado","Huesillo",obraSociales,traumatologo);
+
+        Medico medico = new Medico(1,"Armado","Huesillo",Arrays.asList(sancorSalud),traumatologo);
+
         Paciente paciente = new Paciente(1,"Juan", "Gomez",sancorSalud);
 
         gestionTurnoService.solicitarTurno(paciente,medico,traumatologo,false);
         Mockito.verify(turnoDAO).registrar(Mockito.any(Turno.class));
 
     }
+
 
 }

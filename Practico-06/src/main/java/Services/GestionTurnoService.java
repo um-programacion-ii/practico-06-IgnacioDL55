@@ -40,12 +40,15 @@ public class GestionTurnoService {
     public List<Medico> solicitarMedicoEspecialidad(Paciente paciente, Especialidad especialidad, boolean razonP){
         List<Medico> medicoEspecialidad = medicoDAO.findEspecialidad(especialidad);
         List<Medico> mFiltrado = new ArrayList<>();
-        for (Medico medicos : medicoEspecialidad){
-            if (medicos.getObraSocialRecibidas().contains(paciente.getObraSocial()) && medicos.getEspecialidad() != null){
-                mFiltrado.add(medicos);
-                System.out.println("Medicos: " + mFiltrado);
-            } else if (razonP){
-                mFiltrado = medicoEspecialidad;
+        for (Medico medico : medicoEspecialidad){
+            if (razonP) { //Si el turno es por razon particular, trae a todos los medicos por especialidad
+                if (medico.getEspecialidad().equals(especialidad)) {
+                    mFiltrado.add(medico);
+                }
+            } else {
+                if (medico.getObraSocialRecibidas().contains(paciente.getObraSocial()) && medico.getEspecialidad().equals(especialidad)) {
+                    mFiltrado.add(medico);
+                }
             }
         }
         return mFiltrado;
