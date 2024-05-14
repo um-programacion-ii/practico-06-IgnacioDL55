@@ -1,6 +1,6 @@
 package Services;
 
-import DAO.Implements.TurnoDAOIm;
+import DAO.Interface.EspecialidadDAO;
 import DAO.Interface.MedicoDAO;
 import DAO.Interface.PacienteDAO;
 import DAO.Interface.TurnoDAO;
@@ -20,9 +20,9 @@ public class GestionTurnoService {
         this.turnoDAO = turnoDAO;
     }
 
-    public static synchronized GestionTurnoService getInstancia(TurnoDAO turnoDAO, MedicoDAO medicoDAO, PacienteDAO pacienteDAO) {
+    public static synchronized GestionTurnoService getInstancia(TurnoDAO turnoDAO, MedicoDAO medicoDAO, PacienteDAO pacienteDAO, EspecialidadDAO especialidadDAO) {
         if (instancia == null) {
-            instancia = new GestionTurnoService(turnoDAO);
+            instancia = new GestionTurnoService(turnoDAO, pacienteDAO, medicoDAO);
         }
         return instancia;
     }
@@ -39,7 +39,7 @@ public class GestionTurnoService {
 
     public List<Medico> solicitarMedicoEspecialidad(Paciente paciente, Especialidad especialidad, boolean razonP){
         List<Medico> medicoEspecialidad = medicoDAO.findEspecialidad(especialidad);
-        List<Medico> mFiltrado = new ArrayList<Medico>();
+        List<Medico> mFiltrado = new ArrayList<>();
         for (Medico medicos : medicoEspecialidad){
             if (medicos.getObraSocialRecibidas().contains(paciente.getObraSocial()) && medicos.getEspecialidad() != null){
                 mFiltrado.add(medicos);

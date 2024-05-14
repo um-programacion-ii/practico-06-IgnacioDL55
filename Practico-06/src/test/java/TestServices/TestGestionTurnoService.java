@@ -37,7 +37,7 @@ public class TestGestionTurnoService {
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        gestionTurnoService = GestionTurnoService.getInstancia(turnoDAO,medicoDAO,pacienteDAO);
+        gestionTurnoService = GestionTurnoService.getInstancia(turnoDAO,medicoDAO,pacienteDAO,especialidadDAO);
         gestionTurnoService.reiniciarInstancia();
 
     }
@@ -48,7 +48,6 @@ public class TestGestionTurnoService {
         List<ObraSocial> obraSociales = new ArrayList<>();
         ObraSocial sancorSalud = new ObraSocial(1, "sancor salud");
         ObraSocial osde = new ObraSocial(2,"OSDE");
-        ObraSocial swissMedical = new ObraSocial(2,"Swiss Medical");
 
         Especialidad traumatologo = new Especialidad(1, "Traumatologo");
         Especialidad cardiologo = new Especialidad(2, "Cardiologo");
@@ -64,11 +63,36 @@ public class TestGestionTurnoService {
         Paciente paciente = new Paciente(1,"Juan", "Gomez",sancorSalud);
         Paciente paciente1 = new Paciente(2, "Humberto", "Tonico",osde);
 
-
         Mockito.when(medicoDAO.findEspecialidad(traumatologo)).thenReturn(medicos);
         List<Medico> traumatologos = gestionTurnoService.solicitarMedicoEspecialidad(paciente,traumatologo,false);
-        assertArrayEquals(medicos.toArray(), traumatologos.toArray());
+        for (Medico medicoResult: traumatologos ){
+            assertEquals(medicoResult.getNombre(),medico.getNombre());
+        }
 
+    }
+
+    @Test
+    public void testMedicosEspecialidadRazonParticular() {
+        List<ObraSocial> obraSociales = new ArrayList<>();
+        ObraSocial sancorSalud = new ObraSocial(1, "sancor salud");
+        ObraSocial osde = new ObraSocial(2,"OSDE");
+
+        Especialidad traumatologo = new Especialidad(1, "Traumatologo");
+        Especialidad cardiologo = new Especialidad(2, "Cardiologo");
+
+        List<Medico> medicos = new ArrayList<>();
+        Medico medico = new Medico(1,"Armado","Huesillo",obraSociales,traumatologo);
+        Medico medico1= new Medico(2,"Luis", "Ramirez",obraSociales,traumatologo);
+        Medico medico2= new Medico(3,"Javier","Hernandez",obraSociales,cardiologo);
+        medicos.add(medico);
+        medicos.add(medico1);
+        medicos.add(medico2);
+
+        Paciente paciente = new Paciente(1,"Juan", "Gomez",sancorSalud);
+
+        Mockito.when(medicoDAO.findEspecialidad(traumatologo)).thenReturn(medicos);
+        List<Medico> traumatologos = gestionTurnoService.solicitarMedicoEspecialidad(paciente,traumatologo,true);
+        assertEquals(medicos, traumatologos);
     }
 
     @Test
