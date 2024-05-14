@@ -20,13 +20,17 @@ public class AtencionMedicoService {
     private PacienteDAOIm paciente;
     private MedicoDAOIm medico;
     private RecetaDAOIm recetas = new RecetaDAOIm();
-    private TurnoDAOIm turnos;
+    private TurnoDAOIm turnos = new TurnoDAOIm();
 
-    public static AtencionMedicoService getInstancia(PacienteDAO paciente, MedicoDAO medico,RecetaDAO receta) {
+    public static synchronized AtencionMedicoService getInstancia(PacienteDAOIm paciente, MedicoDAOIm medico,RecetaDAOIm receta, TurnoDAOIm turno) {
         if (instancia == null) {
             instancia = new AtencionMedicoService();
         }
         return instancia;
+    }
+
+    public static void reiniciarInstancia() {
+        instancia = null;
     }
 
     public Turno GestionTurnoInit(Turno turno) {

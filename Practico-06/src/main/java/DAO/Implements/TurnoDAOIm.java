@@ -65,7 +65,7 @@ public class TurnoDAOIm implements TurnoDAO {
     @Override
     public void modificar(Turno turno) {
         System.out.println("Actualizando Turno");
-        turnos.replace(turno.getId(), turno);
+        turnos.put(turno.getId(), turno);
 
     }
 

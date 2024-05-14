@@ -15,18 +15,29 @@ public class GestionTurnoService {
     private PacienteDAO pacienteDAO;
     private MedicoDAO medicoDAO;
 
+
     private GestionTurnoService(TurnoDAO turnoDAO) {
         this.turnoDAO = turnoDAO;
     }
 
-    public static synchronized GestionTurnoService getInstancia(TurnoDAO turnoDAO) {
+    public static synchronized GestionTurnoService getInstancia(TurnoDAO turnoDAO, MedicoDAO medicoDAO, PacienteDAO pacienteDAO) {
         if (instancia == null) {
             instancia = new GestionTurnoService(turnoDAO);
         }
         return instancia;
     }
 
-    public void solicitarMedicoEspecialidad(Paciente paciente, Especialidad especialidad, boolean razonP){
+    private GestionTurnoService(TurnoDAO turnoDAO, PacienteDAO pacienteDAO, MedicoDAO medicoDAO) {
+        this.turnoDAO = turnoDAO;
+        this.medicoDAO = medicoDAO;
+        this.pacienteDAO = pacienteDAO;
+    }
+
+    public static void reiniciarInstancia() {
+        instancia = null;
+    }
+
+    public List<Medico> solicitarMedicoEspecialidad(Paciente paciente, Especialidad especialidad, boolean razonP){
         List<Medico> medicoEspecialidad = medicoDAO.findEspecialidad(especialidad);
         List<Medico> mFiltrado = new ArrayList<Medico>();
         for (Medico medicos : medicoEspecialidad){
@@ -37,10 +48,11 @@ public class GestionTurnoService {
                 mFiltrado = medicoEspecialidad;
             }
         }
+        return mFiltrado;
     }
 
-    public void solicitarTurno(Paciente paciente, Turno turno, Medico medico,Especialidad especialidad, boolean razonP){
-        if (paciente == null || turno == null || medico == null || especialidad == null) {
+    public void solicitarTurno(Paciente paciente, Medico medico,Especialidad especialidad, boolean razonP){
+        if (paciente == null || medico == null || especialidad == null) {
             System.out.println("Error, faltan datos para generar el turno");
         } else {
             Turno turno1 = new Turno(1,paciente,medico,razonP);
